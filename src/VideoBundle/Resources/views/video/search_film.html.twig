@@ -1,0 +1,26 @@
+{%extends "base.html.twig"%}
+{% block body %}
+    <h4>Chercher un film</h4>
+    <form action="{{url('post_search_film')}}" method="post">
+        <div class="form-group">
+            <label>Titre du film</label>
+            <input class="form-control" name="titre" type=text" placeholder="titre du film" />
+        </div>
+        <div class="form-group">
+            <label>Catégorie du film</label>
+            <select class="form-control" name="categorie">
+                {%for categorie in categories%}
+                    <option value="{{categorie.id}}">{{categorie.nom}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date d'ajout du film</label>
+            <input class="form-control" type=date" name="date" placeholder="jj-mm-AAAA"/>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-info" value="Chercher"/>
+        </div>
+
+    </form>
+{% endblock %}

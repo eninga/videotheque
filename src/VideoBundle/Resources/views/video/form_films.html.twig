@@ -1,0 +1,37 @@
+{%extends "base.html.twig"%}
+{% block body %}
+    <h4>Ajouter un film</h4>
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <div>
+        {{ form_label(form.titre) }}
+        {{ form_widget(form.titre,{'attr': {'class': 'form-control', 'placeholder':'Titre du film'}}) }}
+        {{ form_errors(form.titre) }}
+
+    </div>
+    <div>
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder':'Description du film'}}) }}
+        {{ form_errors(form.description, {'attr': {'class': 'alert alert-danger'}}) }}
+    </div>
+
+    <div>
+        {{ form_label(form.categorie) }}
+        {{ form_widget(form.categorie,{'attr': {'class': 'form-control', 'placeholder':'Selectionner la categorie'}}) }}
+        {{ form_errors(form.categorie, {'attr': {'class': 'alert alert-danger'}}) }}
+        <div class="float-right"><a href="{{url('video_add_category')}}">Ajouter une catégorie<br/></a></div>
+    </div>
+
+    <div>
+        {{ form_label(form.photo) }}
+        {{ form_widget(form.photo,{'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.photo, {'attr': {'class': 'alert alert-danger'}}) }}
+
+    </div>
+    <div>
+        <br/>
+        <input type="submit" class="btn btn-info" value="Enregistrer"/>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

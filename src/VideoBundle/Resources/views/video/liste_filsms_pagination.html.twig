@@ -1,0 +1,6 @@
+{%extends "@Video/video/liste_films.html.twig"%}
+{% block pagination_navigation %}
+    <div class="pagination">
+        {{ knp_pagination_render(films)}}
+    </div>
+{% endblock %}

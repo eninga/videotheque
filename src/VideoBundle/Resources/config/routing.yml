@@ -1,0 +1,54 @@
+#route pour la page d'accueil
+video_homepage:
+    path:     /
+    defaults: { _controller: VideoBundle:Video:index }
+
+#route pour ajouter une nouvelle catégorie
+video_add_category:
+    path:     /add-category
+    defaults: { _controller: VideoBundle:Video:postCategory }
+    
+#route pour ajouter un film   
+video_add_film:
+    path:     /add-film
+    defaults: { _controller: VideoBundle:Video:postFilm }
+  
+#route pour la modification d'un film
+video_edit_film:
+    path:     /film/{id}/edit
+    defaults: { _controller: VideoBundle:Video:postFilm }
+    requirements:
+      id: '\d+'
+      
+#route pour supprimer un film     
+video_delete_film:
+    path:     /film/{id}/delete
+    defaults: { _controller: VideoBundle:Video:deleteFilm }
+    requirements:
+      id: '\d+'
+      
+#route pour afficher les catégories   
+video_get_categories:
+    path:     /categories
+    defaults: { _controller: VideoBundle:Video:getCategories }
+
+#route pour afficher les fils d'une catégorie
+video_get_films_categories:
+    path:     /categories-{categorie}/films
+    defaults: { _controller: VideoBundle:Video:getFilmsByCategorie }
+    
+#route pour afficher les details d'un film
+video_get_film:
+    path:     /{categorie}/{titre}-{id}.html
+    defaults: { _controller: VideoBundle:Video:getFilm }
+
+#route pour afficher le formulaire de recherche
+search_film:
+  path:     /rechercher
+  defaults: { _controller: VideoBundle:Video:searchForm }
+  
+#route pour afficher les films trouvés par formulaire de recherche
+post_search_film:
+  path:     /films-recherches
+  defaults: { _controller: VideoBundle:Video:postSearchFilms }
+  

@@ -1,0 +1,4 @@
+services:
+    video.notify:
+        class: VideoBundle\Services\Notifier
+        arguments: ["@mailer", "%email_admin%"]

@@ -1,0 +1,24 @@
+{%extends "base.html.twig"%}
+{% block body %}
+    {%for film in films%}
+        <div class="media">
+            <img class="mr-3" src="{{asset('films/images/' ~ film.photo)}}" width="128" alt="Photo d'affichage manquante">
+            <div class="media-body">
+                <h4 class="mt-0">{{film.titre}}</h4>
+                {{film.description|truncate(100,true)}}
+                <table>
+                    <tr>
+                        {% set replace_value = {'-': '_', ' ': '_',',':'_',';':'_','/':'_','{':'_','}':'_'} %}
+                        <td><a class="btn" href="{{url('video_get_film',{'categorie':film.categorie.nom|replace(replace_value),'titre':film.titre|replace(replace_value),'id':film.id})}}">Details</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr/>
+    {%else%}
+        <h4>Aucun film trouvé !<a href="{{url('video_get_categories')}}"> Categories</a></h4>
+    {%endfor%}
+    {% block pagination_navigation %}
+    {% endblock %}
+{% endblock %}
+

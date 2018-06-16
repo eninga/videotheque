@@ -1,0 +1,12 @@
+{%extends "base.html.twig"%}
+{% block body %}
+    <div class="card"  style="width: 24rem;">
+        <img class="card-img-top" src="{{asset('films/images/' ~ film.photo)}}" alt="Photo d'affichage manquante">
+        <div class="card-body">
+            <h5 class="card-title">{{film.titre}}<br/> (<i>{{film.categorie.nom}}) Ajouté le {{film.dateAjout|date('d-m-Y')}}</i><br></h5>
+            <p class="card-text">{{film.description}}</p>
+            <a href="{{url('video_edit_film',{'id':film.id})}}" class="card-link">Modifier</a>
+            <a href="{{url('video_delete_film',{'id':film.id})}}" class="card-link">Supprimer</a>
+        </div>
+    </div>
+{% endblock %}

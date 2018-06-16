@@ -1,0 +1,13 @@
+{%extends "base.html.twig"%}
+{% block body %}
+    <p>Liste des catégories (Cliquer pour afficher les films)</p>
+    <ul class="list-group list-group-flush">
+        {%for category in categories%}
+            <li class="list-group-item"><a href="{{url('video_get_films_categories',{'categorie':category.id})}}">{{category.nom}}</a></li>
+            {%endfor%}
+    </ul>
+    <br/>
+    <p>    
+        <a href="{{url('video_add_category')}}">Ajouter une nouvelle catégorie!</a>
+    </p>
+{% endblock %}
