@@ -74,7 +74,6 @@ class VideoController extends Controller {
      */
     public function postFilmAction(Request $request, $id = null) {
         $film = null;
-        $compteur = null;
         if ($id != null) {
             $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
         } else {
@@ -83,10 +82,9 @@ class VideoController extends Controller {
         $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $file */
             $photo = $film->getPhoto();
             if ($id == null && $photo != null) {
-                $fileName = "photo" . md5(uniqid()) . '.' . $photo->guessExtension();
+                $fileName = "photo_" . md5(uniqid()) . '.' . $photo->guessExtension();
                 $photo->move($this->getParameter('photo_affichage'), $fileName);
                 $film->setPhoto($fileName);
             }
@@ -109,15 +107,10 @@ class VideoController extends Controller {
     public function deleteFilmAction($id) {
         $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
         if ($film && $film->getPhoto() != null) {
-            $fs = new Filesystem();
-            try {
-                $fs->remove($this->getParameter('photo_affichage') . "/" . $film->getPhoto());
-            } catch (IOExceptionInterface $exception) {
-                throw new Exception("Erreur lors de la supprimr " . $exception->getPath());
-            }
+            $this->deletePhoto($film);
         }
-        $entityManager = $this->getDoctrine()->getManager();
         $categorie = $film->getCategorie()->getId();
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($film);
         $compteur = $this->compteur();
         $compteur->setTotal($compteur->getTotal() - 1);
@@ -233,6 +226,20 @@ class VideoController extends Controller {
         if ($id == null) {
             $notifier = $this->container->get("video.notify");
             $notifier->notify($this->emailView($film, $action));
+        }
+    }
+
+    /**
+     * Suppression de la photo sur le disque de la machine
+     * @param Film $film
+     * @throws Exception
+     */
+    public function deletePhoto($film) {
+        $fs = new Filesystem();
+        try {
+            $fs->remove($this->getParameter('photo_affichage') . "/" . $film->getPhoto());
+        } catch (IOExceptionInterface $exception) {
+            throw new Exception("Erreur lors de la suppression " . $exception->getPath());
         }
     }
 
