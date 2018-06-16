@@ -92,21 +92,9 @@ class VideoController extends Controller {
             }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($film);
-            if ($this->compteur() == null) {
-                $compteur = new Compteur();
-                $compteur->setTotal(1);
-            } else {
-                $compteur = $this->compteur();
-                $compteur->setTotal($compteur->getTotal() + 1);
-            }
-
-            $entityManager->persist($compteur);
+            $this->incrementCompteur($entityManager, $id);
             $entityManager->flush();
-            //Envoie d'un email à l'admin si c'est un ajout d'un nouveau film
-            if ($id == null) {
-                $notifier = $this->container->get("video.notify");
-                $notifier->notify($this->emailView($film, "add"));
-            }
+            $this->notify($film, $id, 'add');
             return $this->redirectToRoute('video_get_films_categories', ['categorie' => $film->getCategorie()->getId()]);
         }
         return $this->render("@Video/video/form_films.html.twig", ['form' => $form->createView()]);
@@ -135,9 +123,7 @@ class VideoController extends Controller {
         $compteur->setTotal($compteur->getTotal() - 1);
         $entityManager->persist($compteur);
         $entityManager->flush();
-        //Envoie d'un email à l'admin si le film est supprimé en utilisant le service 'video.notify'
-        $notifier = $this->container->get("video.notify");
-        $notifier->notify($this->emailView($film, "delete"));
+        $this->notify($film, null, 'delete');
         return $this->redirectToRoute('video_get_films_categories', ['categorie' => $categorie]);
     }
 
@@ -216,6 +202,38 @@ class VideoController extends Controller {
      */
     public function emailView($film, $action) {
         return $this->renderView('@Video/video/email.html.twig', array('action' => $action, 'film' => $film));
+    }
+
+    /**
+     * On incremente le compteur si un nouveau film est ajouté
+     * @param $entityManager
+     * @param integer $id
+     */
+    public function incrementCompteur($entityManager, $id) {
+        $compteur = null;
+        if ($id == null) {
+            if ($this->compteur() == null) {
+                $compteur = new Compteur();
+                $compteur->setTotal(1);
+            } else {
+                $compteur = $this->compteur();
+                $compteur->setTotal($compteur->getTotal() + 1);
+            }
+            $entityManager->persist($compteur);
+        }
+    }
+
+    /**
+     * Envoi de l'email à l'admin
+     * @param Film $film
+     * @param integer $id Id du film, 
+     * @param string $action delete ou add
+     */
+    public function notify($film, $id, $action) {
+        if ($id == null) {
+            $notifier = $this->container->get("video.notify");
+            $notifier->notify($this->emailView($film, $action));
+        }
     }
 
 }
