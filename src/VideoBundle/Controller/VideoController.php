@@ -83,7 +83,10 @@ class VideoController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $photo = $film->getPhoto();
-            if ($id == null && $photo != null) {
+            if ($photo != null && $request->files != null) {
+                if ($id != null && $film->getPhoto() != null) {
+                    $this->deletePhoto($film);
+                }
                 $fileName = "photo_" . md5(uniqid()) . '.' . $photo->guessExtension();
                 $photo->move($this->getParameter('photo_affichage'), $fileName);
                 $film->setPhoto($fileName);
