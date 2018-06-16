@@ -28,7 +28,8 @@ class FilmType extends AbstractType {
                 ))
                 ->add('photo', FileType::class, array(
                     'label' => "Photo d'affichage",
-                    'required' => false
+                    'required' => false,
+                    'data_class' => null
                 ))
                 ->add('categorie', EntityType::class, array(
                     'class' => Category::class,
