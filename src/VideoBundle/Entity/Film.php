@@ -30,7 +30,7 @@ class Film {
     /**
      * @var string
      * @Assert\NotBlank(message="Un titre doit être renseigné")
-     * @Assert\Length(min = 10, minMessage = "Un titre de film doit faire au minimum {{ limit }} caractères")
+     * @Assert\Length(min = 10, minMessage = "Le titre du film doit faire au minimum {{ limit }} caractères")
      * @Assert\Regex(pattern = "/[a-zA-Z0-9]+$/i", message = "Un titre ne peut pas contenir des caractères speciaux")
      * @ORM\Column(name="titre", type="string", length=255, unique=true)
      */
