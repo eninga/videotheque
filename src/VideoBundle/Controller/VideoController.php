@@ -76,26 +76,29 @@ class VideoController extends Controller {
         $film = null;
         if ($id != null) {
             $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
+            $path = $film->getPhoto(); // On garde en memoire l'ancienne valeur de la photo
         } else {
-            $film = new Film();
+            $film = new Film(); // Crée une nouveller instance si le film n'existe pas encore
         }
         $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $photo = $film->getPhoto();
-            if ($photo != null && $request->files != null) {
-                if ($id != null && $film->getPhoto() != null) {
-                    $this->deletePhoto($film);
+            $photo = $film->getPhoto(); // Ici le $photo peut être l'ancienne ou la nouvelle uplaodée
+            if ($photo != null && $request->files != null) {// Vérifie s'il y a une photo uploadée
+                if ($id != null && $path != null) {
+                    $this->deletePhoto($path); // On supprime l'ancienne photo s'il y a une nouvelle
                 }
                 $fileName = "photo_" . md5(uniqid()) . '.' . $photo->guessExtension();
                 $photo->move($this->getParameter('photo_affichage'), $fileName);
                 $film->setPhoto($fileName);
+            } elseif ($path != null) {
+                $film->setPhoto($path); // En cas de modification sans uploader une photo, on garde l'ancienne si elle existe
             }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($film);
             $this->incrementCompteur($entityManager, $id);
             $entityManager->flush();
-            $this->notify($film, $id, 'add');
+            $this->notify($film, $id, 'add'); //envoie de l'email à l'admin
             return $this->redirectToRoute('video_get_films_categories', ['categorie' => $film->getCategorie()->getId()]);
         }
         return $this->render("@Video/video/form_films.html.twig", ['form' => $form->createView()]);
@@ -110,7 +113,7 @@ class VideoController extends Controller {
     public function deleteFilmAction($id) {
         $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
         if ($film && $film->getPhoto() != null) {
-            $this->deletePhoto($film);
+            $this->deletePhoto($film->getPhoto());
         }
         $categorie = $film->getCategorie()->getId();
         $entityManager = $this->getDoctrine()->getManager();
@@ -119,7 +122,7 @@ class VideoController extends Controller {
         $compteur->setTotal($compteur->getTotal() - 1);
         $entityManager->persist($compteur);
         $entityManager->flush();
-        $this->notify($film, null, 'delete');
+        $this->notify($film, null, 'delete'); //envoie de l'email à l'admin
         return $this->redirectToRoute('video_get_films_categories', ['categorie' => $categorie]);
     }
 
@@ -234,13 +237,13 @@ class VideoController extends Controller {
 
     /**
      * Suppression de la photo sur le disque de la machine
-     * @param Film $film
+     * @param string $path le nom de laphoto dans la base de donnée
      * @throws Exception
      */
-    public function deletePhoto($film) {
+    public function deletePhoto($path) {
         $fs = new Filesystem();
         try {
-            $fs->remove($this->getParameter('photo_affichage') . "/" . $film->getPhoto());
+            $fs->remove($this->getParameter('photo_affichage') . "/" . $path);
         } catch (IOExceptionInterface $exception) {
             throw new Exception("Erreur lors de la suppression " . $exception->getPath());
         }
