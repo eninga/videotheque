@@ -252,13 +252,13 @@ class VideoController extends Controller {
     }
 
     /**
-     * Verie si le film existeavant un traitement
+     * Verifie si le film existeavant un traitement
      * @param Film $film
-     * @throws Exception
+     * @throws Exception si le film n'est pas trouvé
      */
     public function checkFilm($film) {
         if (!$film) {
-            throw $this->createNotFoundException("Le film n'existe pas");
+            throw $this->createNotFoundException("Le film n'a pas été trouvé!");
         }
     }
 
