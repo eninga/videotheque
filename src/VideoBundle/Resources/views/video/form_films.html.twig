@@ -1,6 +1,6 @@
 {%extends "base.html.twig"%}
 {% block body %}
-    <h4>Ajouter un film</h4>
+    <h4>{{form.titre.vars.value != '' ? 'Modifier le film': 'Ajouter un film'}}</h4>
     {{ form_start(form) }}
     {{ form_errors(form) }}
     <div>
