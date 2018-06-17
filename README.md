@@ -1,5 +1,6 @@
 # Vidéothèque en ligne
-
+Exercice de Création d'une vidéothèque en ligne,
+Réalisé avec symfony 3.4
 ## Installation
 
 * Cloner ce depot
