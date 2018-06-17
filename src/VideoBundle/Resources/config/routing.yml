@@ -36,11 +36,15 @@ video_get_categories:
 video_get_films_categories:
     path:     /categories-{categorie}/films
     defaults: { _controller: VideoBundle:Video:getFilmsByCategorie }
+    requirements:
+      categorie: '\d+'
     
 #route pour afficher les details d'un film
 video_get_film:
     path:     /{categorie}/{titre}-{id}.html
     defaults: { _controller: VideoBundle:Video:getFilm }
+    requirements:
+      id: '\d+'
 
 #route pour afficher le formulaire de recherche
 search_film:

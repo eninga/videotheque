@@ -6,7 +6,6 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use VideoBundle\Entity\Category;
 use VideoBundle\Entity\Compteur;
@@ -23,7 +22,7 @@ use VideoBundle\Form\FilmType;
 class VideoController extends Controller {
 
     /**
-     * Affichage la page d'accueil
+     * Affichage de la page d'accueil
      * @return Response
      */
     public function indexAction() {
@@ -65,6 +64,7 @@ class VideoController extends Controller {
      */
     public function getFilmAction($id) {
         $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
+        $this->checkFilm($film);
         return $this->render("@Video/video/details_film.html.twig", ["film" => $film]);
     }
 
@@ -76,7 +76,8 @@ class VideoController extends Controller {
         $film = null;
         if ($id != null) {
             $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
-            $path = $film->getPhoto(); // On garde en memoire l'ancienne valeur de la photo
+            $this->checkFilm($film);
+            $path = $film->getPhoto(); // On garde en mémoire l'ancienne valeur de la photo
         } else {
             $film = new Film(); // Crée une nouveller instance si le film n'existe pas encore
         }
@@ -112,6 +113,7 @@ class VideoController extends Controller {
      */
     public function deleteFilmAction($id) {
         $film = $this->getDoctrine()->getRepository('VideoBundle:Film')->find($id);
+        $this->checkFilm($film);
         if ($film && $film->getPhoto() != null) {
             $this->deletePhoto($film->getPhoto());
         }
@@ -246,6 +248,17 @@ class VideoController extends Controller {
             $fs->remove($this->getParameter('photo_affichage') . "/" . $path);
         } catch (IOExceptionInterface $exception) {
             throw new Exception("Erreur lors de la suppression " . $exception->getPath());
+        }
+    }
+
+    /**
+     * Verie si le film existeavant un traitement
+     * @param Film $film
+     * @throws Exception
+     */
+    public function checkFilm($film) {
+        if (!$film) {
+            throw $this->createNotFoundException("Le film n'existe pas");
         }
     }
 
