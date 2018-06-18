@@ -10,7 +10,7 @@ Exercice de création d'une vidéothèque en ligne réalisée avec symfony 3.4
 
 2. Lancez `composer install`
 
-3. Pour recevoir les emails lors des ajouts ou suppressions des films dans `app/config/parameters.yml` renseigner l'adresse email de l'admin
+3. Pour recevoir les emails lors des ajouts ou suppressions des films, dans `app/config/parameters.yml` renseigner l'adresse email de l'admin
 
 ```
 parameters:
